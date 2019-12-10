@@ -167,9 +167,9 @@ habit={
 | POST        | `/auth/logout`                | (empty)                      | 204            | 400          | Logs out the user                                            |
 | GET         | `/habits`                |                              |                | 400          | Show all user's habits                                         |
 | GET         | `/habits/:id`            | {id}                         |                |              | Show specific tournament                                     |
-| POST        | `/add-habit` | {}                           | 201            | 400          | Create and save a new tournament                             |
+| POST        | `/habits` | {}                           | 201            | 400          | Create and save a new habit                             |
 | PUT         | `/habits/edit/:id`       | {image, title, description}           | 200            | 400          | edit tournament                                              |
-| DELETE      | `/habits/delete/:id`     | {id}                         | 201            | 400          | delete tournament                                            |
+| DELETE      | `/habits/delete/:id`     | {id}                         | 201            | 400          | delete habit                                            |
 
 <br>
 
