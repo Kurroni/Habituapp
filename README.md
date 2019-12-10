@@ -46,9 +46,9 @@ Habituapp is a great way to stay disciplined and commited when you start a new h
 ## Routes
 | Path | Component | Permissions | Behavior | 
 |------|--------|--| -------|
- `/` | HomePageComponent | public/user | Sign up form and link to login |
+ `/` | HomePageComponent | public | Sign up form (navigates to NewHabit)and link to login |
 | `/auth/login` | LoginPageComponent | anon only | login form, link to signup navigating to HomePage, navigate to TodayPage after login |
-| `/add-habit` | AddHabitPageComponent | user only | button navigating to CreateHabitPage |
+| `/add-habit` | AddHabitPageComponent | user only | NewHabit - button navigating to CreateHabitPage |
 | `/add-habit` | AddHabitPageComponent | user only | CreateHabitPage - form to add the new habit by title and navigate to TodayPage after creation |
 | `/add-habit` | AddHabitPageComponent | user only | EditForm for the habit by title and navigate to TodayPage after save |
 | `/today` | TodayPageComponent | user only | TodayPage - shows all habits of the user, link to CreateHabitPage |
@@ -58,70 +58,39 @@ Habituapp is a great way to stay disciplined and commited when you start a new h
 
 ## Components
 
-- HomeNoUser component
+- Home component
   - Input: empty
   - Output: empty
-- Login component
-  - Input: user: any
-  - Output: user object
 - Signup component
   - Input: user: any
   - Output: user object
-
-- Home component
-  - Input: user object
+  
+- Login component
+  - Input: user: any
   - Output: user object
-- Team card component
-  - Input: user object
-  - Output: team object
-- Task card component
-  - Input: user object
-  - Output: task object
-- CurrentGrowthCompass card component
-  - Input: user object
-  - Output: finalCompass object
-- Evolution card component
-  - Input: user object
-  - Output: finalCompass object
-
-- AddTeam component
-  - Input: user: any, growthModel: any
-  - Output: team object
-
-- AddGrowthModel component
-  - Input: growthModel: any
-  - Output: growthModel object
-- NewIndicators card component
+  
+- NewHabitButton component
   - Input: empty
-  - Output: change(params indicators.Schema)
+  - Output: empty
+  
+- CreateNewHabit component
+  - Input: habit: any
+  - Output: habit object
+  
+- EditHabit component
+  - Input: habit: any
+  - Output: habit object
 
-- Team component
-  - Input: team object
-  - Output: team object
-- TeamMember card component
-  - Input: team object
+- Today component
+  - Input: user object
   - Output: user object
-- session card component
-  - Input: team object
-  - Output: session object
-
-- Assessment component
-  - Input: team object
-  - Output: session object
-
-- Session component
-  - Input: session object
-  - Output: session object
-- SessionState card component
-  - Input: session object
-  - Output: session object
-
-- FinalAssessment component
-  - Input: session object
-  - Output: user object and session object
-- SessionFinal card component
-  - Input: finalCompass object
-  - Output: session object, finalCompass object and user object
+- ListHabits component
+  - Input: user object
+  - Output: habit object
+  
+- SingleHabit component
+  - Input: user object, habit object
+  - Output: habit object
 
 
 ## Services
@@ -129,39 +98,20 @@ Habituapp is a great way to stay disciplined and commited when you start a new h
 - Auth Service
   - auth.login(user)
   - auth.signup(user)
-  - auth.imageUpload(file)
   - auth.logout()
   - auth.me()
 
-- Team Service
-  - team.createTeam(data)
-  - team.getOne(id)
-  - team.updateOne(id, data)
-
 - User Service
-  - user.getAll()
+  - user.getAll()           //in login proccess
   - user.getOne(id)
   - user.getOneByEmail(email)
-  - user.updateTheUserTeam(id, data)
-  - user.updateUserCurrentCompass(id, data)
-  - user.updateUser(id, data)
-
-- GrowthModel Service
-  - growthModel.getAll()
-  - growthModel.getOne(id)
-  - growthModel.getOneByName(name)
-
-- Checkpoint Service
-  - checkpoint.createCheckpoint(data)
-  - checkpoint.getAll()
-  - checkpoint.getOne(id)
-  - checkpoint.updateOne(data)
-
-- FinalCompass Service
-  - finalCompass.createFinalCompass(data)
-  - finalCompass.getAll()
-  - finalCompass.getOne(id)
-  - finalCompass.updateOne(id, data)
+  
+- Habit Service
+  - habit.createHabit(data)
+  - habit.imageUpload(file)   //????
+  - habit.getAll()         //by user-id
+  - habit.getOne(id)
+  - habit.updateOne(id, data)  
 
 
 # Server
@@ -170,67 +120,24 @@ Habituapp is a great way to stay disciplined and commited when you start a new h
 ```
 user={
   password: String,
-  firstName: String,
-  lastName: String,
+  username: {
+    type:String,
+    required: true,
+    unique: true
+  },
   email: {
     type:String,
     required: true,
     unique: true
   },
+  habits: [{type: Schema.Types.ObjectId, ref: 'Habit'}],
+  }
+  
+habit={
   photoUrl: String,
-  team: {type: Schema.Types.ObjectId, ref: 'Team'},
-  currentGrowthCompass : {type: Schema.Types.ObjectId, ref: 'FinalCompass'}
-}
-
-growthModel={
-  name:{ type: String, required: true, unique: true},
-  indicators:{ type: [indicatorSchema], required: true},
-}
-
-team={
-  name:{ type: String, required: true},
-  members:[{type: Schema.Types.ObjectId, ref: 'User'}],
-  growthModel: {type: Schema.Types.ObjectId, ref:'GrowthModel'},
-  checkpoints:[{type: Schema.Types.ObjectId, ref: 'Checkpoint'}],
-}
-
-checkpoint={
-  date: Date,
-  assessments:{ type: [assessmentSchema] },
-  finalAssessments: [{type: Schema.Types.ObjectId, ref: 'FinalCompass'}],
-  currentCheckpoint: Boolean,
-}
-
-finalCompass_id={
-  evaluated: {type: Schema.Types.ObjectId, ref: 'User'},
-  growthCompass:{ type: growthCompassSchema},
-  toImprove: {type: Array, default: []},
-  done: {type: Boolean, default: false},
-  team:{type: Schema.Types.ObjectId, ref: 'Team'}
-}
-```
-
-## Schemas
-```
-indicator=newSchema{
-  name:{ type: String, required: true},
-  levelOne:{ type: String},
-  levelTwo:{ type: String},
-  levelThree:{ type: String},
-  levelFour:{ type: String},
-  assessedLevel:{ type: Number, default: 0},
-}
-
-growthCompass=newSchema{
-  name: String,
-  indicators:{ type: [indicatorSchema]},
-}
-
-assessment=newSchema{
-  evaluator: {type: Schema.Types.ObjectId, ref: 'User'},
-  evaluated: {type: Schema.Types.ObjectId, ref: 'User'},
-  growthCompass: { type: growthCompassSchema},
-  done: {type: Boolean, default: false}
+  title: String,
+  description: String,
+  days: [{date:Date, done: Boolean}]
 }
 
 ```
@@ -239,226 +146,46 @@ assessment=newSchema{
 
 ### Front-end routes
 
-- ('/') : profile page if logged in or home page with login/signup links
+- ('/') : home page with login link and signup form     // /auth/signup
 - ('/login') : login page
-- ('/signup') : signup page
-- ('/edit-profile') : edit profile 
-- ('/add-team') : form page to create new team
-- ('/add-model') : form page to create new growth model
-- ('/team:id') : profile of the team which display the users, there growth compass and the sessions
-- ('/team:id/session') : dashboard of the session with the users and the next step
-- ('/team:id/session/assessment') : assessment page 
+- ('/new-habit') : button page linked to '/add-habit' page
+- ('/edit-profile') : edit profile           //////????????
+- ('/add-habit') : form page to create new habit
+- ('/habits') : To-do list for loged in user for today
+- ('/habits/:id') : Single habit page with statistics
+- ('/habits/:id/edit') : Edit single habit page
 
 ## API Endpoints (backend routes)
 
-- GET /auth/me
-  - 404 if no user in session
-  - 200 with user object
-- POST /auth/signup
-  - 401 if user logged in
-  - body:
-    - firstName
-    - lastName
-    - photoUrl
-    - email
-    - password
-  - validation
-    - fields not empty (422)
-    - user not exists (409)
-  - create user with encrypted password
-  - store user in session
-  - 200 with user object
-- POST /auth/login
-  - 401 if user logged in
-  - body:
-    - email
-    - password
-  - validation
-    - fields not empty (422)
-    - user exists (404)
-    - passdword matches (404)
-  - store user in session
-  - 200 with user object
-- POST /auth/logout
-  - body: (empty)
-  - 204
+## API Endpoints (backend routes)
 
-- GET /user/
-  - 404 if no user in session
-  - 200 with users object
-- GET /user/:id
-  - 404 if no user
-  - 200 with user object
-- PUT /user/:id
-  - body:
-    - team
-    - currentGrowthCompass
-    - previousGrowthCompass
-    - currentTask
-    - completedTask
-    - myGrowthModel
-  - validation
-    - id is valid (404)
-    - id exists (404)
-  - update user
+| HTTP Method | URL                         | Request Body                 | Success status | Error Status | Description                                                  |
+| ----------- | --------------------------- | ---------------------------- | -------------- | ------------ | ------------------------------------------------------------ |
+| POST        | `/auth/signup`                | {username, email, password}      | 201            | 404          | Checks if fields not empty (422) and user not exists (409), then create user with encrypted password, and store user in session |
+| POST        | `/auth/login`                 | {username, password}         | 200            | 401          | Checks if fields not empty (422), if user exists (404), and if password matches (404), then stores user in session |
+| POST        | `/auth/logout`                | (empty)                      | 204            | 400          | Logs out the user                                            |
+| GET         | `/habits`                |                              |                | 400          | Show all user's habits                                         |
+| GET         | `/habits/:id`            | {id}                         |                |              | Show specific tournament                                     |
+| POST        | `/add-habit` | {}                           | 201            | 400          | Create and save a new tournament                             |
+| PUT         | `/habits/edit/:id`       | {image, title, description}           | 200            | 400          | edit tournament                                              |
+| DELETE      | `/habits/delete/:id`     | {id}                         | 201            | 400          | delete tournament                                            |
 
-- GET /growth-model/
-  - 404 if no growthmodel
-  - 200 with growthModels object
-- GET /growth-model/:id
-  - 404 if no growthModel
-  - 200 with growthModel object
-- POST /growth-model
-  - body:
-    - name
-    - indicators
-  - validation
-    - fields not empty
-  - create new growthModel
-  - updates user in session
-- PUT /growth-model/:id
-  - body:
-    - name
-    - indicators
-  - validation
-    - id is valid (404)
-    - id exists (404)
-  - update growthModel
-- DELETE /growth-model/:id
-  - validation
-    - id is valid (404)
-    - id exists (404)
-  - body: (empty - the growthModel is already stored in the users session)
-  - remove from growthModel
-  - updates user in session
-
-- GET /team/:id
-  - 404 if no team
-  - 200 with team object
-- POST /team
-  - body:
-    - name
-    - members
-    - growthModel
-  - validation
-    - fields not empty
-  - create new team
-  - updates users
-- PUT /team/:id
-  - body:
-    - members
-    - sessions
-  - validation
-    - id is valid (404)
-    - id exists (404)
-  - update team
-
-- GET /session/:id
-  - 404 if no session
-  - 200 with session object
-- POST /session
-  - body:
-    - date
-    - currentSession
-  - validation
-    - fields not empty
-  - create new session
-  - updates team
-- PUT /session/:id
-  - body:
-    - assessment
-    - finalAssessment
-    - currentSession
-  - validation
-    - id is valid (404)
-    - id exists (404)
-    - currentSession: true
-  - update session
-
-- GET /final-compass/:id
-  - 404 if no finalCompass
-  - 200 with finalCompass object
-- POST /final-compass
-  - body:
-    - evaluated
-    - growthCompass
-    - toImprove
-    - tasks
-    - messages
-  - validation
-    - fields not empty
-  - create new finalCompass
-  - update session
-  - update user
-- PUT /final-compass/:id
-  - body:
-    - evaluated
-    - growthCompass
-    - toImprove
-    - tasks
-    - messages
-  - validation
-    - id is valid (404)
-    - id exists (404)
-  - update finalCompass
-
-
-## States y States Transitions
-
-- GrowthCompass Visualisation
-- Visualisation of the assessed GrowthCompass
-- GrowthCompass first round assessments
-- GrowthCompass final assessment
-- Authentification
-- Teams and users management system
-- Growth model builder
-- User's evolution
-- Personal Growth tasks board
-- Landing page
-- Help system center
-
-
-## Task
-
-- Setup achitecture product
-- Create the growthModel:
-  - Indicators definition
-  - levels definition
-  - My growthModel management
-- growthModel infos interface
-- update de growthCompass after assessment
-- assess my own growthCompass
-- assess other member's growthCompass
-- Display the growthCompassess
-- Creation of the final assessment
-- Definitin of the 2 indicators to improve
-- Chat board
-- Authentification:
-  - log in
-  - log out
-  - Sign up
-  - Edit profile
-- Team builder:
-  - Users search while creation team
-  - growthModel search while creation team
-- Current and previous growthCompass listing
-- Tasks list creation
+<br>
 
 
 ## Links
 
 
 ### Trello
-[Link url](https://trello.com/b/TB3xiKpg/skillsamp)
 
 
 ### Git
 URls for the project repo and deploy
-[Link Repo Server](https://github.com/chloeleteinturier/GrowthCompass-Server)
-[Link Repo Client](https://github.com/chloeleteinturier/SkillsAmp-Client)
-[Link Deploy](https://skillsamp.herokuapp.com/)
+[Link Repo Server]
+[Link Repo Client]
+[Link Deploy]
 
 
 ### Slides
 URls for the project presentation (slides)
-[Link Slides.com]()
+
