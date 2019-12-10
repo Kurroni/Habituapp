@@ -58,9 +58,7 @@ Habituapp is a great way to stay disciplined and commited when you start a new h
 
 ## Components
 
-- Home component
-  - Input: empty
-  - Output: empty
+
 - Signup component
   - Input: user: any
   - Output: user object
@@ -69,7 +67,11 @@ Habituapp is a great way to stay disciplined and commited when you start a new h
   - Input: user: any
   - Output: user object
   
-- NewHabitButton component
+-Navbar component
+  - Input: user object
+  - Output: user object
+  
+- NoHabit component
   - Input: empty
   - Output: empty
   
@@ -84,12 +86,13 @@ Habituapp is a great way to stay disciplined and commited when you start a new h
 - Today component
   - Input: user object
   - Output: user object
-- ListHabits component
+  
+- CardHabits component
   - Input: user object
   - Output: habit object
   
-- SingleHabit component
-  - Input: user object, habit object
+- DetailHabit component
+  - Input: habit id
   - Output: habit object
 
 
@@ -102,16 +105,16 @@ Habituapp is a great way to stay disciplined and commited when you start a new h
   - auth.me()
 
 - User Service
-  - user.getAll()           //in login proccess
   - user.getOne(id)
-  - user.getOneByEmail(email)
+  - user.update(id, {habits})
   
 - Habit Service
-  - habit.createHabit(data)
-  - habit.imageUpload(file)   //????
-  - habit.getAll()         //by user-id
+  - habit.createOne(data)
+  - habit.imageUpload(file)
+  *(- habit.getAll()         //by user-id)
   - habit.getOne(id)
-  - habit.updateOne(id, data)  
+  - habit.updateOne(id, data) 
+  - habit.deleteOne(id)
 
 
 # Server
@@ -134,7 +137,7 @@ user={
   }
   
 habit={
-  photoUrl: String,
+  img: String,
   title: String,
   description: String,
   days: [{date:Date, done: Boolean}]
@@ -146,14 +149,12 @@ habit={
 
 ### Front-end routes
 
-- ('/') : home page with login link and signup form     // /auth/signup
+- ('/signup') : signup page     // /auth/signup
 - ('/login') : login page
-- ('/new-habit') : button page linked to '/add-habit' page
-- ('/edit-profile') : edit profile           //////????????
+- ('/today') : home page if loged in
 - ('/add-habit') : form page to create new habit
-- ('/habits') : To-do list for loged in user for today
 - ('/habits/:id') : Single habit page with statistics
-- ('/habits/:id/edit') : Edit single habit page
+- ('/habits/edit/:id') : Edit single habit page
 
 ## API Endpoints (backend routes)
 
