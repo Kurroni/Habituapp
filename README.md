@@ -46,13 +46,12 @@ Habituapp is a great way to stay disciplined and commited when you start a new h
 ## Routes
 | Path | Component | Permissions | Behavior | 
 |------|--------|--| -------|
- `/` | HomePageComponent | public | Sign up form (navigates to NewHabit)and link to login |
-| `/auth/login` | LoginPageComponent | anon only | login form, link to signup navigating to HomePage, navigate to TodayPage after login |
-| `/add-habit` | AddHabitPageComponent | user only | NewHabit - button navigating to CreateHabitPage |
+ `/signup` | HomePageComponent | public | Sign up form (navigates to NewHabit)and link to login |
+| `/login` | LoginPageComponent | anon only | login form, link to signup navigating to HomePage, navigate to TodayPage after login |
+| `/today` | TodayPageComponent | user only | homepage |
 | `/add-habit` | AddHabitPageComponent | user only | CreateHabitPage - form to add the new habit by title and navigate to TodayPage after creation |
-| `/add-habit` | AddHabitPageComponent | user only | EditForm for the habit by title and navigate to TodayPage after save |
-| `/today` | TodayPageComponent | user only | TodayPage - shows all habits of the user, link to CreateHabitPage |
-| `/today/:id` | TodayPageComponent | user only | view of the single habit, link to EditForm |
+| `/habits/edit/:id` | AddHabitPageComponent | user only | EditForm for the habit by title and navigate to TodayPage after save |
+| `/habits/:id` | TodayPageComponent | user only | view of the single habit, link to EditForm |
 | `**` | NotFoundPageComponent | public | 
 
 
